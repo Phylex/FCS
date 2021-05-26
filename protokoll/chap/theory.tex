@@ -1,0 +1,28 @@
+\section{FCS Basic Idea}
+As previously stated, FCS observes the brightness of the radiation emitted from the probe
+through the use of highly sensitive photo diodes. To distinguish the emitted radiation from the radiation used to illuminate the probe, the
+frequencies of both light sources need to be different. This is accomplished by using specialized fluorophores specifically designed for the purpose
+of FCS.
+The underlying Idea of the FCS is to measure the fluctuations of the emitted radiation intensity rather that measuring the intensity itself. Through
+autocorrelation of the signal, the time-scales of the different fluctuations can be measured along with the concentration of the emitting molecules in
+the solution.
+As the fluctuations of the intensity in comparison to the overall intensity reduce as the number of illuminated particles increases, it is very
+important to keep the overall amount of illuminated particles below a certain number. As the number of illuminated molecules is described by the
+poisson equation the fluctuations are proportional to it's uncertainty, which is:
+\begin{equation}
+	\delta F \propto \frac{\sqrt{\langle(\delta N)^2\rangle}}{\langle N\rangle}
+	\label{eq:poisson_uncertainty}
+\end{equation}
+The fluctuations are defined as:
+\begin{equation}
+	\delta F(t) = F(t) - \langle F (t) \rangle = F(t) - \frac{1}{T}\int_0^TF(t)\text{d}t
+	\label{eq:fluctuations}
+\end{equation}
+
+When using FCS, the amount of molecules that are illuminated are controlled by the size of the confocal volume. Only inside the confocal volume is the intensity of the illuminating
+laser high enough to excite the fluorophores. As such the fluctuations of the intensity $\delta F$ can also be written as
+\begin{equation}
+	\delta F(t) = \kappa \int_V I_{ex}(\vec{r})S(\vec{r})\cdot \delta(\sigma q C(\vec{r},t))\text{d}V
+	\label{eq:specail_fluctuations}
+\end{equation}
+where $\kappa$ is the 
