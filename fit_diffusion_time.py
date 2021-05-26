@@ -4,11 +4,20 @@ import numpy as np
 from scipy.optimize import curve_fit
 import sys
 
+def Veff(r_0, z_0):
+    return np.pi**(3/2) * r_0**2 * z_0
+
+def Concentration(V, Nin):
+    return 1/(V*Nin)
+
+def decay_time_constant(r_0, D):
+    return r_0**2/(4*D)
+
 def free_3D_correlation_function(tau, Ninverse, D, r_0, z_0):
-    Veff = np.pi**3/2*r_0**2*z_0
-    C = 1/(Veff*Ninverse)
-    tau_d = r_0**2/(4*D)
-    return (1/(Veff*C))*(1/(1+(tau/tau_d)))*\
+    Vef = Veff(r_0, z_0)
+    C = Concentration(Vef, Ninverse)
+    tau_d = decay_time_constant(r_0, D)
+    return (1/(Vef*C))*(1/(1+(tau/tau_d)))*\
            (1/np.sqrt(1+((r_0/z_0)**2*(tau/tau_d))))
 
 
@@ -34,11 +43,10 @@ def config_combined(T, D, tau_t, Nin):
 def perform_r_0_fit(name, data, func_generator, params):
     print("Perfoming r_0_fit on {}".format(name))
     print("-----------------------------")
-    print("Fit was performed with following fixed parameters:")
+    print("Fixed parameters of fitfunction:")
     for k in params.keys():
         print("{}: {}".format(k, params[k]))
     fit_func = func_generator(**params)
-    print()
     popt, pcov = curve_fit(fit_func, data['t'], data['c'], p0=(350e-9))
     plt.semilogx(data['t'], data['c'], marker='x', linestyle='',
                  label='{}'.format(name))
@@ -51,7 +59,17 @@ def perform_r_0_fit(name, data, func_generator, params):
     figname = "r_0_fit_on_{}.pdf".format(name.replace(" ", '_'))
     plt.savefig(figname)
     plt.close()
-    print("Parameters of fit:\nr_0 = {} +/- {}".format(popt[0], np.sqrt(pcov[0][0])))
+    print("Parameters of fit:\nr_0 = {} +/- {} m".format(popt[0], np.sqrt(pcov[0][0])))
+    V = Veff(popt[0], 5*popt[0])
+    dpv = np.abs(V - Veff(popt[0]+np.sqrt(pcov[0][0]), 5*popt[0]+np.sqrt(pcov[0][0])))
+    dnv = np.abs(V - Veff(popt[0]-np.sqrt(pcov[0][0]), 5*popt[0]-np.sqrt(pcov[0][0])))
+    D = params['D']
+    C = Concentration(popt[0], D)
+    dpc = np.abs(C - Concentration(popt[0]+np.sqrt(pcov[0][0]), D))
+    dnc = np.abs(C - Concentration(popt[0]-np.sqrt(pcov[0][0]), D))
+    print("Calculated values from fit result:")
+    print("Veff = {} (+{}/-{}) m^3".format(V, dpv, dnv))
+    print("C = {} (+{}/-{}) 1/m^3".format(C, dpc, dnc))
     print("A plot of this fit was generatet at {}".format(figname))
     print()
 
