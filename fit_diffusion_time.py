@@ -84,12 +84,29 @@ def perform_r_0_fit(name, data, func_generator, params):
     print("A plot of this fit was generatet at {}".format(figname))
     print()
 
-def two_species_autocorrelation(tau, tau_d1, tau_d2, f_1, D, Np):
+def motility_function(tau, tau_d, z_r_ratio):
+    return (1/(1+(tau/tau_d)))*\
+           (1/np.sqrt(1+((1/z_r_ratio)**2*(tau/tau_d))))
+
+def two_species_autocorrelation(tau, tau_d1, tau_d2, f_1, Np):
     f_2 = 1-f_1
+    part_1 = f_1 * motility_function(tau, tau_d1, 5)
+    part_2 = f_2 * motility_function(tau, tau_d2, 5)
+    return (1/Np) * (part_1 + part_2)
 
 
-def two_species_fit(data, params):
-    pass
+def two_species_fit(data, name):
+    print("Performing fit for autocorrelation function of two different species in the same sample")
+    print("---------------------------------------------------------------------------------------")
+    popt, pcov = curve_fit(two_species_autocorrelation, data['t'], data['c'],
+                           p0=(500e-6, 10000e-6, 0.5, 0.2))
+    print("Results of the fit:")
+    print("tau_d1: {} +/- {} s".format(popt[0], np.sqrt(pcov[0][0])))
+    print("tau_d2: {} +/- {} s".format(popt[1], np.sqrt(pcov[1][1])))
+    print("f_1: {} +/- {}".format(popt[2], np.sqrt(pcov[2][2])))
+    print("f_2: {} +/- {}".format(1-popt[2], np.sqrt(pcov[2][2])))
+    print("Np: {} +/- {}".format(popt[3], np.sqrt(pcov[3][3])))
+    print()
 
 if __name__ == "__main__":
     # part 1 read in all the data:
@@ -125,4 +142,7 @@ if __name__ == "__main__":
     # now we come to task 2
     print("Task 2")
     print("======")
+    print()
+    two_species_fit(probe_1, "Probe 1")
+    two_species_fit(probe_2, "Probe 2")
 
