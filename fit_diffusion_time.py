@@ -84,8 +84,9 @@ def perform_r_0_fit(name, data, func_generator, params):
     print("A plot of this fit was generatet at {}".format(figname))
     print()
 
-def two_species_autocorrelation():
-    pass
+def two_species_autocorrelation(tau, tau_d1, tau_d2, f_1, D, Np):
+    f_2 = 1-f_1
+
 
 def two_species_fit(data, params):
     pass
@@ -111,8 +112,8 @@ if __name__ == "__main__":
 
     # hand-write the parameters from the results file into python
     atto_488_params = {'T': 0.44, 'tau_t': 0.8*10**-6,
-                       'Nin': 0.05, 'D': 400e-6, 'z_r_ratio': 5}
-    alexa_546_params = {'Nin': 0.021, 'D': 390e-6, 'z_r_ratio': 5}
+                       'Nin': 0.05, 'D': 400e-12, 'z_r_ratio': 5}
+    alexa_546_params = {'Nin': 0.021, 'D': 390e-12, 'z_r_ratio': 5}
 
     # perform fits on the two datasets for part one
     print("Task 1")
